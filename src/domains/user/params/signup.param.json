@@ -1,0 +1,6 @@
+{
+  "email": { "type": "string", "location": "body.email" },
+  "password": { "type": "string", "location": "body.password" },
+  "name": { "type": "string", "location": "body.name" },
+  "role": { "type": "string", "location": "body.role", "default": "student" }
+}
