@@ -1,0 +1,11 @@
+'use strict';
+
+const { Course } = require('../../../models');
+
+const createCourse = ({ userId, courses }) => new Promise((resolve, reject) => {
+  Course.createCourses(userId, courses)
+      .then(() => resolve({ status: 200, data: { message: 'Ok' } }))
+      .catch((err) => reject(err));
+});
+
+module.exports = { createCourse };

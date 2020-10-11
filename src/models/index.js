@@ -6,4 +6,6 @@ module.exports = {
   Role: require('./role.model'),
   Password: require('./password.model'),
   Token: require('./token.model'),
+  Course: require('./course.model'),
+  UserCourse: require('./user_course.model'),
 };

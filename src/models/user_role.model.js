@@ -1,6 +1,7 @@
 'use strict';
 
 const { Model } = require('objection');
+const RoleModel = require('./role.model');
 
 class UserRoleModel extends Model {
   static get tableName() {
@@ -19,6 +20,16 @@ class UserRoleModel extends Model {
         role_id: { type: 'integer' },
       },
     };
+  }
+
+  static getUserRole(userId) {
+    return new Promise((resolve, reject) => {
+      UserRoleModel
+        .query()
+        .where({ user_id: userId })
+        .then((record) => resolve(record))
+        .catch((err) => reject(err));
+    });
   }
 };
 

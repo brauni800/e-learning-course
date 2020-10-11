@@ -1,0 +1,8 @@
+{
+  "userId": { "type": "number", "location": "appended.userId" },
+  "courses": {
+    "type": "array",
+    "location": "body.courses",
+    "item": { "type": "object" }
+  }
+}
