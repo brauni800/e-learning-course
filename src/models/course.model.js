@@ -29,7 +29,6 @@ class CourseModel extends Model {
         const results = [];
         for (let index in courses) {
           index = Number(index);
-          console.log(index, courses[index], courses[index - 1]);
           const course = await CourseModel
               .query(trx)
               .insert({
@@ -50,6 +49,37 @@ class CourseModel extends Model {
                 .patch({ next_course: course.course_id });
           }
           results.push(course);
+        }
+        return results;
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
+
+  static deleteCourses(courseId, correlative = false) {
+    return new Promise((resolve, reject) => {
+      CourseModel.transaction(async(trx) => {
+        const deleteOneCourse = async(trx, courseId) => {
+          await UserCourseModel
+              .query(trx)
+              .findOne({ course_id: courseId })
+              .delete();
+          await CourseModel
+              .query(trx)
+              .where({ next_course: courseId })
+              .patch({ next_course: null });
+          const course = await CourseModel
+              .query(trx)
+              .findById(courseId);
+          await course.$query(trx).delete();
+          return course;
+        }
+        const results = [await deleteOneCourse(trx, courseId)];
+        if (correlative) {
+          while (results[results.length - 1].next_course) {
+            results.push(await deleteOneCourse(trx, results[results.length - 1].next_course));
+          }
         }
         return results;
       })
