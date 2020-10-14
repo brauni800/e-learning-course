@@ -10,4 +10,8 @@ module.exports = {
   UserCourse: require('./user_course.model'),
   Lesson: require('./lesson.model'),
   CourseLesson: require('./course_lesson.model'),
+  Question: require('./question.model'),
+  LessonQuestion: require('./lesson_question.model'),
+  Option: require('./option.model'),
+  QuestionOption: require('./question_option.model'),
 };
