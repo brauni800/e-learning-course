@@ -90,8 +90,21 @@ class LessonModel extends Model {
     });
   }
 
-  static getLessons() {
-    return new Promise((resolve, reject) => {});
+  /**
+   * @param {Number} courseId
+   * @returns {Promise<LessonModel[]>}
+   */
+  static getLessons(courseId) {
+    return new Promise((resolve, reject) => {
+      LessonModel
+          .query()
+          .join('course_lesson AS cl', 'lesson.lesson_id', '=', 'cl.lesson_id')
+          .select('cl.course_id', 'lesson.*')
+          .where({ course_id: courseId })
+          .throwIfNotFound()
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
   }
 };
 

@@ -14,7 +14,24 @@ const deleteLesson = ({ lessonId, correlative }) => new Promise((resolve, reject
       .catch((err) => reject(err));
 });
 
-const getLesson = () => new Promise((resolve, reject) => {});
+const getLesson = ({ courseId }) => new Promise((resolve, reject) => {
+  Lesson.getLessons(courseId)
+      .then((lessons) => {
+        const result = lessons.reduce((accumulator, current) => {
+          if (lessons.filter((l) => current.lesson_id === l.next_lesson).length === 0) {
+            accumulator.lessons.push([current]);
+          } else {
+            accumulator.lessons.find((group) => group.find((l) => l.next_lesson === current.lesson_id)).push(current);
+          }
+          return accumulator;
+        }, {
+          courseId,
+          lessons: [],
+        });
+        resolve({ status: 200, data: result });
+      })
+      .catch((err) => reject(err));
+});
 
 module.exports = {
   createLesson,
