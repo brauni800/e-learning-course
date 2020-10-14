@@ -59,8 +59,35 @@ class LessonModel extends Model {
     });
   }
 
-  static deleteLessons() {
-    return new Promise((resolve, reject) => {});
+  static deleteLessons(lessonId, correlative = false) {
+    return new Promise((resolve, reject) => {
+      LessonModel.transaction(async(trx) => {
+        const deleteOneLesson = async(trx, lessonId) => {
+          await CourseLessonModel
+              .query(trx)
+              .findOne({ lesson_id: lessonId })
+              .delete();
+          await LessonModel
+              .query(trx)
+              .where({ next_lesson: lessonId })
+              .patch({ next_lesson: null });
+          const lesson = await LessonModel
+              .query(trx)
+              .findById(lessonId);
+          await lesson.$query(trx).delete();
+          return lesson;
+        }
+        const results = [await deleteOneLesson(trx, lessonId)];
+        if (correlative) {
+          while (results[results.length - 1].next_lesson) {
+            results.push(await deleteOneLesson(trx, results[results.length - 1].next_lesson));
+          }
+        }
+        return results;
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
   }
 
   static getLessons() {

@@ -1,0 +1,5 @@
+{
+  "userId": { "type": "number", "location": "appended.userId" },
+  "lessonId": { "type": "number", "location": "body.lessonId" },
+  "correlative": { "type": "boolean", "location": "body.correlative", "default": false }
+}

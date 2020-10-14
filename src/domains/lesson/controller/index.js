@@ -8,8 +8,8 @@ const createLesson = ({ courseId, lessons }) => new Promise((resolve, reject) =>
       .catch((err) => reject(err));
 });
 
-const deleteLesson = () => new Promise((resolve, reject) => {
-  Lesson.deleteLessons()
+const deleteLesson = ({ lessonId, correlative }) => new Promise((resolve, reject) => {
+  Lesson.deleteLessons(lessonId, correlative)
       .then(() => resolve({ status: 200, data: { message: 'Ok' } }))
       .catch((err) => reject(err));
 });
