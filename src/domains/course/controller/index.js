@@ -14,4 +14,23 @@ const deleteCourse = ({ courseId, correlative }) => new Promise((resolve, reject
       .catch((err) => reject(err));
 });
 
-module.exports = { createCourse, deleteCourse };
+/**
+ * @returns {Promise<{status:Number,data:Course[]}>}
+ */
+const getCourse = () => new Promise((resolve, reject) => {
+  Course.getCourses()
+      .then((courses) => {
+        const result = courses.reduce((/** @type {Course[][]} */accumulator, current) => {
+          if (courses.filter((c) => current.course_id === c.next_course).length === 0) {
+            accumulator.push([current]);
+          } else {
+            accumulator.find((group) => group.find((c) => c.next_course === current.course_id)).push(current);
+          }
+          return accumulator;
+        }, []);
+        return resolve({ status: 200, data: result });
+      })
+      .catch((err) => reject(err));
+});
+
+module.exports = { createCourse, deleteCourse, getCourse };

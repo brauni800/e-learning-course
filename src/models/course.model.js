@@ -87,6 +87,19 @@ class CourseModel extends Model {
           .catch((err) => reject(err));
     });
   }
+
+  /**
+   * @returns {Promise<CourseModel[]>}
+   */
+  static getCourses() {
+    return new Promise((resolve, reject) => {
+      CourseModel
+          .query()
+          .throwIfNotFound()
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
 };
 
 module.exports = CourseModel;
