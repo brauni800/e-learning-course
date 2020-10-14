@@ -8,4 +8,6 @@ module.exports = {
   Token: require('./token.model'),
   Course: require('./course.model'),
   UserCourse: require('./user_course.model'),
+  Lesson: require('./lesson.model'),
+  CourseLesson: require('./course_lesson.model'),
 };
