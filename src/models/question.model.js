@@ -80,6 +80,35 @@ class QuestionModel extends Model {
           .catch((err) => reject(err));
     });
   }
+
+  static deleteQuestions(questionIds) {
+    return new Promise((resolve, reject) => {
+      QuestionModel.transaction(async(trx) => {
+        for (const questionId of questionIds) {
+          const question = await QuestionModel
+              .query(trx)
+              .findById(questionId)
+              .throwIfNotFound();
+          await LessonQuestionModel
+              .query(trx)
+              .findOne({ question_id: question.question_id })
+              .delete();
+          const questionOptions = await QuestionOptionModel
+              .query(trx)
+              .where({ question_id: question.question_id })
+              .throwIfNotFound();
+          for (const questionOption of questionOptions) {
+            await questionOption.$query(trx).delete();
+            await OptionModel.query(trx).deleteById(questionOption.option_id);
+          }
+          await question.$query(trx).delete();
+        }
+        return { message: 'OK' };
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));;
+    });
+  }
 }
 
 module.exports = QuestionModel;

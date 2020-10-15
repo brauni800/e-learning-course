@@ -1,0 +1,4 @@
+{
+  "userId": { "type": "number", "location": "appended.userId" },
+  "questionIds": { "type": "array", "location": "body.questionIds"  , "item": { "type": "number" } }
+}
