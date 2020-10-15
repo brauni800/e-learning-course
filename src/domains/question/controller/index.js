@@ -14,7 +14,14 @@ const deleteQuestions = ({ questionIds }) => new Promise((resolve, reject) => {
       .catch((err) => reject(err));
 });
 
+const getQuestions = ({ lessonId }) => new Promise((resolve, reject) => {
+  Question.getQuestionsByLessonId(lessonId)
+      .then((data) => resolve({ status: 200, data }))
+      .catch((err) => reject(err));
+});
+
 module.exports = {
   createQuestions,
   deleteQuestions,
+  getQuestions,
 };

@@ -109,6 +109,31 @@ class QuestionModel extends Model {
           .catch((err) => reject(err));;
     });
   }
+
+  static getQuestionsByLessonId(lessonId) {
+    return new Promise((resolve, reject) => {
+      QuestionModel.transaction(async(trx) => {
+        const questions = await QuestionModel
+            .query(trx)
+            .join('lesson_question AS lc', 'question.question_id', '=', 'lc.question_id')
+            .select('lc.lesson_id', 'question.*')
+            .where({ lesson_id: lessonId })
+            .throwIfNotFound();
+        for (const question of questions) {
+          const options = await OptionModel
+              .query(trx)
+              .join('question_option AS qo', 'option.option_id', '=', 'qo.option_id')
+              .select('option.*')
+              .where({ question_id: question.question_id })
+              .throwIfNotFound();
+          question.options = [...options];
+        }
+        return questions;
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
 }
 
 module.exports = QuestionModel;
