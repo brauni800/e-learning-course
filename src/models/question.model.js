@@ -24,6 +24,62 @@ class QuestionModel extends Model {
       },
     };
   }
+
+  static createQuestion(lessonId, questions) {
+    return new Promise((resolve, reject) => {
+      QuestionModel.transaction(async(trx) => {
+        const result = [];
+        for (const data of questions) {
+          const question = await QuestionModel
+              .query(trx)
+              .insert({
+                question: data.question,
+                type: data.type || 'one',
+              });
+          await LessonQuestionModel
+              .query(trx)
+              .insert({
+                lesson_id: lessonId,
+                question_id: question.question_id,
+              });
+          if (question.type !== 'boolean') {
+            const answers = data.options.filter((opt) => opt.answer);
+            if (answers.length === 0) throw new Error('Questions must have at least one option with answer true parameter');
+            if (question.type === 'one' && answers.length > 1) throw new Error('Type \'one\' question must have only one question with answer true parameter');
+            question.options = [];
+            for (const optionData of data.options) {
+              const option = await OptionModel
+                  .query(trx)
+                  .insert({ option: optionData.option });
+              await QuestionOptionModel
+                  .query(trx)
+                  .insert({
+                    question_id: question.question_id,
+                    option_id: option.option_id,
+                    answer: optionData.answer || false,
+                  });
+              question.options.push(option);
+            }
+          } else {
+            const option = await OptionModel
+                .query(trx)
+                .insert({ option: data.answer ? '1' : '0' });
+            await QuestionOptionModel
+                .query(trx)
+                .insert({
+                  question_id: question.question_id,
+                  option_id: option.option_id,
+                  answer: true,
+                });
+          }
+          result.push(question);
+        }
+        return result;
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
 }
 
 module.exports = QuestionModel;
