@@ -1,4 +1,5 @@
 {
   "userId": { "type": "number", "location": "appended.userId" },
-  "lessonId": { "type": "number", "location": "params.lessonId" }
+  "lessonId": { "type": "number", "location": "params.lessonId" },
+  "studentId": { "type": "number", "location": "query.userId", "default": null }
 }

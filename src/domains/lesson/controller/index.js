@@ -33,8 +33,8 @@ const getLesson = ({ courseId }) => new Promise((resolve, reject) => {
       .catch((err) => reject(err));
 });
 
-const getResults = ({ userId, lessonId }) => new Promise((resolve, reject) => {
-  Answer.getResults(userId, lessonId)
+const getResults = ({ userId, lessonId, studentId }) => new Promise((resolve, reject) => {
+  Answer.getResults(studentId || userId, lessonId)
       .then((answers) => answers.reduce((accumulator, current) => accumulator + Number(current.score), 0) / answers.length)
       .then((score) => Lesson.query().findById(lessonId).then((lesson) => ({ lesson, score })))
       .then(({ lesson, score }) => ({
