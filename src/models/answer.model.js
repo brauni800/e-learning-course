@@ -109,7 +109,6 @@ class AnswerModel extends Model {
             user_id: userId,
             lesson_id: lessonId,
           })
-          .throwIfNotFound()
           .then((record) => resolve(record))
           .catch((err) => reject(err));
     });

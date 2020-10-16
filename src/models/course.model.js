@@ -1,6 +1,7 @@
 'use strict';
 
 const { Model } = require('objection');
+const LessonModel = require('./lesson.model');
 const UserCourseModel = require('./user_course.model');
 
 class CourseModel extends Model {
@@ -123,6 +124,24 @@ class CourseModel extends Model {
               user_id: userId,
               course_id: courseId,
             });
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
+
+  static getAvailableLessons(userId, courseId) {
+    return new Promise((resolve, reject) => {
+      CourseModel.transaction(async(trx) => {
+        const userCourse = await UserCourseModel.query(trx).findOne({ user_id: userId, course_id: courseId });
+        if (!userCourse) throw new Error('You are not in this course');
+        const lessons = await LessonModel.getLessons(courseId);
+        const firstLessonsInGroups = lessons.reduce((/** @type {LessonModel[]} */accumulator, /** @type {LessonModel} */ current, index, array) => {
+          if (array.filter((dbl) => current.lesson_id === dbl.next_lesson).length === 0) accumulator.push(current);
+          return accumulator;
+        }, []);
+        console.log(firstLessonsInGroups);
+        return firstLessonsInGroups;
       })
           .then((record) => resolve(record))
           .catch((err) => reject(err));

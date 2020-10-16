@@ -2,7 +2,13 @@
 
 const router = require('express').Router();
 const { reqValidator } = require('@brauni/req-validator');
-const { createCourse, deleteCourse, getCourse, joinCourse } = require('../controller');
+const {
+  createCourse,
+  deleteCourse,
+  getCourse,
+  joinCourse,
+  getAvailableLessons,
+} = require('../controller');
 const { paramCreateCourse, paramDeleteCourse, paramJoinCourse } = require('../params');
 const { validateRole } = require('../../../middlewares');
 
@@ -35,6 +41,15 @@ router.get('/', (req, res) => {
 
 router.post('/:courseId/join', reqValidator(paramJoinCourse), validateRole('student'), (req, res) => {
   joinCourse(req.dto)
+      .then(({ status, data }) => res.status(status).json(data))
+      .catch((err) => {
+        console.error(err.stack);
+        return res.status(400).json({ message: err.message });
+      });
+});
+
+router.get('/:courseId/available', reqValidator(paramJoinCourse), (req, res) => {
+  getAvailableLessons(req.dto)
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
