@@ -1,0 +1,4 @@
+{
+  "userId": { "type": "number", "location": "appended.userId" },
+  "courseId": { "type": "number", "location": "params.courseId" }
+}

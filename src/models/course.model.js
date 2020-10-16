@@ -100,6 +100,34 @@ class CourseModel extends Model {
           .catch((err) => reject(err));
     });
   }
+
+  /**
+   * @param {Number} userId 
+   * @param {Number} courseId 
+   * @returns {Promise<UserCourseModel>}
+   */
+  static join(userId, courseId) {
+    return new Promise((resolve, reject) => {
+      CourseModel.transaction(async(trx) => {
+        await CourseModel.query(trx).findById(courseId).throwIfNotFound();
+        const userCourse = await UserCourseModel
+            .query(trx)
+            .findOne({
+              user_id: userId,
+              course_id: courseId,
+            });
+        if (userCourse) throw new Error('You are already in this course');
+        return await UserCourseModel
+            .query(trx)
+            .insert({
+              user_id: userId,
+              course_id: courseId,
+            });
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
 };
 
 module.exports = CourseModel;

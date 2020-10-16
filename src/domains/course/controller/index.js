@@ -33,4 +33,15 @@ const getCourse = () => new Promise((resolve, reject) => {
       .catch((err) => reject(err));
 });
 
-module.exports = { createCourse, deleteCourse, getCourse };
+const joinCourse = ({ userId, courseId }) => new Promise((resolve, reject) => {
+  Course.join(userId, courseId)
+      .then(() => resolve({ status: 200, data: { message: 'Ok' } }))
+      .catch((err) => reject(err));
+});
+
+module.exports = {
+  createCourse,
+  deleteCourse,
+  getCourse,
+  joinCourse,
+};
