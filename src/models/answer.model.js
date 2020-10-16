@@ -95,6 +95,25 @@ class AnswerModel extends Model {
           .catch((err) => reject(err));
     });
   }
+
+  /**
+   * @param {Number} userId 
+   * @param {Number} lessonId 
+   * @returns {Promise<AnswerModel[]>}
+   */
+  static getResults(userId, lessonId) {
+    return new Promise((resolve, reject) => {
+      AnswerModel
+          .query()
+          .where({
+            user_id: userId,
+            lesson_id: lessonId,
+          })
+          .throwIfNotFound()
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
 }
 
 module.exports = AnswerModel;
