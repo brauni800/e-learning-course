@@ -14,4 +14,5 @@ module.exports = {
   LessonQuestion: require('./lesson_question.model'),
   Option: require('./option.model'),
   QuestionOption: require('./question_option.model'),
+  Answer: require('./answer.model'),
 };
