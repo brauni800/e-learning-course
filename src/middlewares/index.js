@@ -2,5 +2,5 @@
 
 module.exports = {
   validateToken: require('./validateToken'),
-  validateProfessor: require('./validateProfessor'),
+  validateRole: require('./validateRole'),
 };

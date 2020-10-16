@@ -4,9 +4,9 @@ const router = require('express').Router();
 const { reqValidator } = require('@brauni/req-validator');
 const { createCourse, deleteCourse, getCourse } = require('../controller');
 const { paramCreateCourse, paramDeleteCourse } = require('../params');
-const { validateProfessor } = require('../../../middlewares');
+const { validateRole } = require('../../../middlewares');
 
-router.post('/', reqValidator(paramCreateCourse), validateProfessor, (req, res) => {
+router.post('/', reqValidator(paramCreateCourse), validateRole('professor'), (req, res) => {
   createCourse(req.dto)
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
@@ -15,7 +15,7 @@ router.post('/', reqValidator(paramCreateCourse), validateProfessor, (req, res) 
       });
 });
 
-router.delete('/', reqValidator(paramDeleteCourse), validateProfessor, (req, res) => {
+router.delete('/', reqValidator(paramDeleteCourse), validateRole('professor'), (req, res) => {
   deleteCourse(req.dto)
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {

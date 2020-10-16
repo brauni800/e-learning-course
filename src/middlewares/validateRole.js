@@ -2,8 +2,8 @@
 
 const { UserRole, Role } = require('../models')
 
-module.exports = (req, res, next) => {
-  Role.findByRole('professor')
+module.exports = (role) => (req, res, next) => {
+  Role.findByRole(role)
       .then((role) => {
         const { userId } = req.dto;
         return UserRole.getUserRole(userId)
