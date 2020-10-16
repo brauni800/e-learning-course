@@ -1,6 +1,6 @@
 'use strict';
 
-const { Lesson, Answer } = require('../../../models');
+const { Lesson } = require('../../../models');
 
 const createLesson = ({ courseId, lessons }) => new Promise((resolve, reject) => {
   Lesson.createLessons(courseId, lessons)
@@ -34,14 +34,7 @@ const getLesson = ({ courseId }) => new Promise((resolve, reject) => {
 });
 
 const getResults = ({ userId, lessonId, studentId }) => new Promise((resolve, reject) => {
-  Answer.getResults(studentId || userId, lessonId)
-      .then((answers) => answers.reduce((accumulator, current) => accumulator + Number(current.score), 0) / answers.length)
-      .then((score) => Lesson.query().findById(lessonId).then((lesson) => ({ lesson, score })))
-      .then(({ lesson, score }) => ({
-        userId,
-        approved: score >= Number(lesson.approval),
-        score,
-      }))
+  Lesson.getResults(studentId || userId, lessonId)
       .then((data) => resolve({ status: 200, data }))
       .catch((err) => reject(err));
 });

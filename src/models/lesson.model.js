@@ -1,6 +1,7 @@
 'use strict';
 
 const { Model } = require('objection');
+const AnswerModel = require('./answer.model');
 const CourseLessonModel = require('./course_lesson.model');
 
 class LessonModel extends Model {
@@ -102,6 +103,21 @@ class LessonModel extends Model {
           .select('cl.course_id', 'lesson.*')
           .where({ course_id: courseId })
           .throwIfNotFound()
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
+
+  static getResults(userId, lessonId) {
+    return new Promise((resolve, reject) => {
+      AnswerModel.getResults(userId, lessonId)
+          .then((answers) => answers.reduce((accumulator, current) => accumulator + Number(current.score), 0) / answers.length)
+          .then((score) => LessonModel.query().findById(lessonId).then((lesson) => ({ lesson, score })))
+          .then(({ lesson, score }) => ({
+            userId,
+            approved: score >= Number(lesson.approval),
+            score,
+          }))
           .then((record) => resolve(record))
           .catch((err) => reject(err));
     });
