@@ -24,12 +24,12 @@ class PasswordModel {
   /**
    * @param {string} password [description]
    * @param {string} hash [description]
-   * @returns {Promise} [description]
+   * @returns {Promise<String>} [description]
    */
   static compare(password, hash) {
-    return new Promise((fulfill, reject) => {
+    return new Promise((resolve, reject) => {
       const match = compareSync(password, hash);
-      if (match) fulfill(password);
+      if (match) resolve(password);
       else reject(new Error('Invalid email or password'));
     });
   }

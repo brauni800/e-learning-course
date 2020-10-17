@@ -2,8 +2,8 @@
 
 const { User, Role, Password, Token } = require('../../../models');
 
-const signup = (data) => new Promise((resolve, reject) => {
-  Role.findByRole(data.role)
+const signup = (data, role = 'student') => new Promise((resolve, reject) => {
+  Role.findByRole(role)
       .then((record) => User.createUser({
         ...data,
         roleId: record.role_id,

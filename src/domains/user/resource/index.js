@@ -2,11 +2,21 @@
 
 const router = require('express').Router();
 const { reqValidator } = require('@brauni/req-validator');
-const { signup } = require('../controller');
-const { paramSignup } = require('../params');
+const { signup, signin } = require('../controller');
+const { paramSignup, paramProfessor } = require('../params');
+const { validateToken, validateRole } = require('../../../middlewares');
 
 router.post('/signup', reqValidator(paramSignup), (req, res) => {
   signup(req.dto)
+      .then(({ status, data }) => res.status(status).json(data))
+      .catch((err) => {
+        console.error(err.stack);
+        return res.status(400).json({ message: err.message });
+      });
+});
+
+router.post('/professor', validateToken, reqValidator(paramProfessor), validateRole('admin'), (req, res) => {
+  signup(req.dto, 'professor')
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
