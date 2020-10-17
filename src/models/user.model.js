@@ -47,6 +47,21 @@ class UserModel extends Model {
           .catch((err) => reject(err));
     });
   }
+
+  /**
+   * @param {String} email 
+   * @returns {Promise<UserModel>}
+   */
+  static getUser(email) {
+    return new Promise((resolve, reject) => {
+      UserModel
+          .query()
+          .findOne({ email })
+          .throwIfNotFound()
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
 };
 
 module.exports = UserModel;

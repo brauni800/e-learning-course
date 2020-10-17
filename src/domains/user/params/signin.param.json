@@ -1,0 +1,4 @@
+{
+  "email": { "type": "string", "location": "body.email" },
+  "password": { "type": "string", "location": "body.password" }
+}
