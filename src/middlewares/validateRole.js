@@ -14,5 +14,8 @@ module.exports = (role) => (req, res, next) => {
         if (record) next();
         else throw new Error('You don\'t have the necessary permissions for this resource');
       })
-      .catch((err) => res.status(400).json({ message: err.message }));
+      .catch((err) => {
+        console.error(err.stack);
+        res.status(400).json({ message: err.message });
+      });
 };

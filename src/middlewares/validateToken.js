@@ -10,6 +10,7 @@ module.exports = (req, res, next) => {
       next();
     } else throw new Error('Missing Bearer token');
   } catch (error) {
+    console.error(error.stack);
     res.status(400).json({ message: error.message });
   }
 }
