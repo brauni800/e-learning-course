@@ -147,6 +147,32 @@ class CourseModel extends Model {
           .catch((err) => reject(err));
     });
   }
+
+  static getStatus(userId, courseId) {
+    return new Promise((resolve, reject) => {
+      CourseModel.transaction(async(trx) => {
+        const userCourse = await UserCourseModel.query(trx).findOne({ user_id: userId, course_id: courseId });
+        if (!userCourse) throw new Error('You are not in this course');
+        const course = await CourseModel.query(trx).findById(courseId).throwIfNotFound();
+        const lessons = await LessonModel.getLessons(course.course_id);
+        let scores = 0;
+        for (const lesson of lessons) {
+          lesson.results = await LessonModel.getResults(userId, lesson.lesson_id);
+          lesson.results.score = Number(lesson.results.score);
+          if (isNaN(lesson.results.score)) lesson.results.score = 'Still without taking the lesson';
+          scores += !isNaN(lesson.results.score) ? lesson.results.score : 0;
+        }
+        return {
+          userId,
+          courseId,
+          average: Number((scores / lessons.length).toFixed(2)),
+          results: lessons.map((lesson) => ({ ...lesson.results, lessonId: lesson.lesson_id })),
+        };
+      })
+          .then((record) => resolve(record))
+          .catch((err) => reject(err));
+    });
+  }
 };
 
 module.exports = CourseModel;

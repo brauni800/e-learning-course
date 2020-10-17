@@ -8,6 +8,7 @@ const {
   getCourse,
   joinCourse,
   getAvailableLessons,
+  getStatus,
 } = require('../controller');
 const { paramCreateCourse, paramDeleteCourse, paramJoinCourse } = require('../params');
 const { validateRole } = require('../../../middlewares');
@@ -50,6 +51,15 @@ router.post('/:courseId/join', reqValidator(paramJoinCourse), validateRole('stud
 
 router.get('/:courseId/available', reqValidator(paramJoinCourse), (req, res) => {
   getAvailableLessons(req.dto)
+      .then(({ status, data }) => res.status(status).json(data))
+      .catch((err) => {
+        console.error(err.stack);
+        return res.status(400).json({ message: err.message });
+      });
+});
+
+router.get('/:courseId/status', reqValidator(paramJoinCourse), (req, res) => {
+  getStatus(req.dto)
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);

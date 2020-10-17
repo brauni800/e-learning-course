@@ -45,10 +45,17 @@ const getAvailableLessons = ({ userId, courseId }) => new Promise((resolve, reje
       .catch((err) => reject(err));
 });
 
+const getStatus = ({ userId, courseId }) => new Promise((resolve, reject) => {
+  Course.getStatus(userId, courseId)
+      .then((data) => resolve({ status: 200, data }))
+      .catch((err) => reject(err));
+});
+
 module.exports = {
   createCourse,
   deleteCourse,
   getCourse,
   joinCourse,
   getAvailableLessons,
+  getStatus,
 };
