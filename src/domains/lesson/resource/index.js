@@ -2,6 +2,7 @@
 
 const router = require('express').Router();
 const { reqValidator } = require('@brauni/req-validator');
+const { NotFoundError } = require('objection');
 const { validateRole } = require('../../../middlewares');
 const {
   createLesson,
@@ -21,7 +22,8 @@ router.post('/', reqValidator(paramCreateLesson), validateRole('professor'), (re
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -30,7 +32,8 @@ router.delete('/', reqValidator(paramDeleteLesson), validateRole('professor'), (
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -39,7 +42,8 @@ router.get('/', reqValidator(paramGetLesson), (req, res) => {
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -48,7 +52,8 @@ router.get('/:lessonId/results', reqValidator(paramGetResults), (req, res) => {
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 

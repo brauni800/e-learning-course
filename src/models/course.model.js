@@ -96,7 +96,7 @@ class CourseModel extends Model {
     return new Promise((resolve, reject) => {
       CourseModel
           .query()
-          .throwIfNotFound()
+          .throwIfNotFound({ status: 204, message: 'Courses not found' })
           .then((record) => resolve(record))
           .catch((err) => reject(err));
     });
@@ -110,7 +110,7 @@ class CourseModel extends Model {
   static join(userId, courseId) {
     return new Promise((resolve, reject) => {
       CourseModel.transaction(async(trx) => {
-        await CourseModel.query(trx).findById(courseId).throwIfNotFound();
+        await CourseModel.query(trx).findById(courseId).throwIfNotFound({ status: 204, message: 'Course not found' });
         const userCourse = await UserCourseModel
             .query(trx)
             .findOne({
@@ -153,7 +153,7 @@ class CourseModel extends Model {
       CourseModel.transaction(async(trx) => {
         const userCourse = await UserCourseModel.query(trx).findOne({ user_id: userId, course_id: courseId });
         if (!userCourse) throw new Error('You are not in this course');
-        const course = await CourseModel.query(trx).findById(courseId).throwIfNotFound();
+        const course = await CourseModel.query(trx).findById(courseId).throwIfNotFound({ status: 204, message: 'Course not found' });
         const lessons = await LessonModel.getLessons(course.course_id);
         let scores = 0;
         for (const lesson of lessons) {

@@ -12,13 +12,15 @@ const {
 } = require('../controller');
 const { paramCreateCourse, paramDeleteCourse, paramJoinCourse } = require('../params');
 const { validateRole } = require('../../../middlewares');
+const { NotFoundError } = require('objection');
 
 router.post('/', reqValidator(paramCreateCourse), validateRole('professor'), (req, res) => {
   createCourse(req.dto)
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -27,7 +29,8 @@ router.delete('/', reqValidator(paramDeleteCourse), validateRole('professor'), (
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -36,7 +39,8 @@ router.get('/', (req, res) => {
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -45,7 +49,8 @@ router.post('/:courseId/join', reqValidator(paramJoinCourse), validateRole('stud
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -54,7 +59,8 @@ router.get('/:courseId/available', reqValidator(paramJoinCourse), (req, res) => 
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 
@@ -63,7 +69,8 @@ router.get('/:courseId/status', reqValidator(paramJoinCourse), (req, res) => {
       .then(({ status, data }) => res.status(status).json(data))
       .catch((err) => {
         console.error(err.stack);
-        return res.status(400).json({ message: err.message });
+        if (err instanceof NotFoundError) return res.status(err.data.status).json({ message: err.data.message });
+        else return res.status(400).json({ message: err.message });
       });
 });
 

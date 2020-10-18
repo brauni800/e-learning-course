@@ -102,7 +102,7 @@ class LessonModel extends Model {
           .join('course_lesson AS cl', 'lesson.lesson_id', '=', 'cl.lesson_id')
           .select('cl.course_id', 'lesson.*')
           .where({ course_id: courseId })
-          .throwIfNotFound()
+          .throwIfNotFound({ status: 204, message: 'Lessons not found' })
           .then((record) => resolve(record))
           .catch((err) => reject(err));
     });

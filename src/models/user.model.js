@@ -57,7 +57,7 @@ class UserModel extends Model {
       UserModel
           .query()
           .findOne({ email })
-          .throwIfNotFound()
+          .throwIfNotFound({ status: 204, message: 'User not found' })
           .then((record) => resolve(record))
           .catch((err) => reject(err));
     });

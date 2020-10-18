@@ -34,13 +34,13 @@ class AnswerModel extends Model {
   static rate(reply) {
     return new Promise((resolve, reject) => {
       AnswerModel.transaction(async(trx) => {
-        const question = await QuestionModel.query(trx).findById(reply.questionId).throwIfNotFound();
+        const question = await QuestionModel.query(trx).findById(reply.questionId).throwIfNotFound({ status: 204, message: 'Question not found' });
         const options = await OptionModel
             .query(trx)
             .join('question_option AS qo', 'option.option_id', '=', 'qo.option_id')
             .select('option.*', 'qo.answer')
             .where({ question_id: reply.questionId })
-            .throwIfNotFound()
+            .throwIfNotFound({ status: 204, message: 'Question not found' })
             .then((options) => options.filter((opt) => opt.answer));
         switch(question.type) {
           case 'multiple':

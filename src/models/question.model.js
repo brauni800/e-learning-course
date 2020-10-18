@@ -88,7 +88,7 @@ class QuestionModel extends Model {
           const question = await QuestionModel
               .query(trx)
               .findById(questionId)
-              .throwIfNotFound();
+              .throwIfNotFound({ status: 204, message: 'Question not found' });
           await LessonQuestionModel
               .query(trx)
               .findOne({ question_id: question.question_id })
@@ -96,7 +96,7 @@ class QuestionModel extends Model {
           const questionOptions = await QuestionOptionModel
               .query(trx)
               .where({ question_id: question.question_id })
-              .throwIfNotFound();
+              .throwIfNotFound({ status: 204, message: 'Question-Option relationship not found' });
           for (const questionOption of questionOptions) {
             await questionOption.$query(trx).delete();
             await OptionModel.query(trx).deleteById(questionOption.option_id);
@@ -118,14 +118,14 @@ class QuestionModel extends Model {
             .join('lesson_question AS lc', 'question.question_id', '=', 'lc.question_id')
             .select('lc.lesson_id', 'question.*')
             .where({ lesson_id: lessonId })
-            .throwIfNotFound();
+            .throwIfNotFound({ status: 204, message: 'Questions not found' });
         for (const question of questions) {
           const options = await OptionModel
               .query(trx)
               .join('question_option AS qo', 'option.option_id', '=', 'qo.option_id')
               .select('option.*')
               .where({ question_id: question.question_id })
-              .throwIfNotFound();
+              .throwIfNotFound({ status: 204, message: 'Options not found' });
           question.options = [...options];
         }
         return questions;
